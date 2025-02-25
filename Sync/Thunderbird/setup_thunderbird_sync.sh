@@ -6,12 +6,26 @@
 ## Description: Script to sync your Thunderbird configuration into Nextcloud
 ## Warning: If Thunderbird is not installed in snap, change the path to the corresponding one.
 ##########################################################################################
+# Ask the user whether they are using the Snap version or the local version of Thunderbird
+echo "Select Thunderbird installation type:"
+echo "1) Snap version"
+echo "0) Local version"
+read -p "Enter your choice (1 for Snap, 0 for Local): " choice
 
-# Define paths
-NEXTCLOUD_DIR="$HOME/Nextcloud2/ThunderbirdConfig"
-# THUNDERBIRD_DIR="$HOME/snap/thunderbird/common/.thunderbird"
-# No snap version
-# THUNDERBIRD_DIR="$HOME/.thunderbird"
+# Define paths based on user input
+if [ "$choice" == "1" ]; then
+    THUNDERBIRD_DIR="$HOME/snap/thunderbird/common/.thunderbird"
+    echo "Using Thunderbird Snap version at: $THUNDERBIRD_DIR"
+elif [ "$choice" == "0" ]; then
+    THUNDERBIRD_DIR="$HOME/.thunderbird"
+    echo "Using Thunderbird local version at: $THUNDERBIRD_DIR"
+else
+    echo "Invalid selection. Please run the script again and select 1 or 0."
+    exit 1
+fi
+
+# Define Nextcloud directory
+NEXTCLOUD_DIR="$HOME/Nextcloud/ThunderbirdConfig"
 
 # Find the default profile from profiles.ini
 PROFILE_NAME=$(awk -F= '/^\[Profile/,/^$/ {if ($1 == "Path") path=$2; if ($1 == "Default" && $2 == "1") print path}' "$THUNDERBIRD_DIR/profiles.ini")
